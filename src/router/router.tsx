@@ -2,7 +2,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import HomePage from "../pages/HomePage";
 import ErrorPage from "../pages/ErrorPage";
 import HowToPlay from "../pages/HowToPlay";
-import Share from "../pages/Share";
+import Dare from "../pages/Dare";
 import LeaderBoard from "../pages/LeaderBoard";
 import Developer from "../pages/Developer";
 import Achievements from "../pages/Achievements";
@@ -24,8 +24,8 @@ const routes = createBrowserRouter([
     errorElement: <ErrorPage />,
   },
   {
-    path: "/share",
-    element: <Share />,
+    path: "/dare",
+    element: <Dare />,
     errorElement: <ErrorPage />,
   },
   {

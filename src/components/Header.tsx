@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 const Header = () => {
   return (
-    <header className="bg-slate-800 p-4 shadow-md">
+    <header className="bg-slate-800 p-4 shadow-md z-50">
       <div className="container mx-auto flex justify-between items-center px-2 lg:px-0">
         <div className="text-white text-2xl font-bold">
           <Link to="/">OddWordle.</Link>
@@ -48,10 +48,10 @@ const Header = () => {
             </li>
             <li>
               <Link
-                to="/share"
+                to="/dare"
                 className="text-white hover:text-gray-300 hover:bg-slate-700 p-2 active:scale-95 inline-block"
               >
-                Share
+                Dare
               </Link>
             </li>
             <li>

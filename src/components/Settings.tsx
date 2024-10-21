@@ -41,6 +41,7 @@ function Settings({
   // Handle save button click to apply changes
   const handleSave = () => {
     dispatch({ type: "SET_ATTEMPTS", payload: 1 });
+    dispatch({ type: "SET_CORRECT", payload: 0 });
     resetRefetch();
     setSettingsVisible(false); // Close settings modal after saving
   };

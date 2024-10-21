@@ -18,6 +18,7 @@ function HomePage() {
     word,
     difficulty,
     attempts,
+    attemptType,
     correct,
     credits,
     userSetWord,
@@ -51,14 +52,6 @@ function HomePage() {
     // Manage hints based on the new word
     handleHints(newWordData.word);
   }
-
-  useEffect(() => {
-    if (attempts + 1 === attempts) {
-      console.log("Game complete");
-    } else {
-      console.log("Game not complete");
-    }
-  }, [attempts]);
 
   function handleHints(word: string) {
     const newUserSetWord = Array(difficulty).fill("");
@@ -130,16 +123,33 @@ function HomePage() {
         setCreditReward(Math.floor(difficulty));
         dispatch({ type: "SET_CREDIT", payload: credits + creditReward });
       }
+      if (attempts === attemptType) {
+        console.log("Game complete");
+      } else {
+        console.log("Game not complete");
+      }
     } else {
       alert("Please complete the answer box!");
     }
   }
 
   function handleContinue() {
-    dispatch({ type: "SET_ATTEMPTS", payload: attempts + 1 });
-    dispatch({ type: "SET_ALERT_BOX", payload: false });
-    GetNewWord();
-    dispatch({ type: "SET_AVOID_RESET_INITIAL_USER_SET_WORD", payload: [] });
+    if (attempts >= attemptType) {
+      if (credits < 50) {
+        dispatch({ type: "SET_ALERT_BOX", payload: false });
+        return alert("You need atleast 50 play credits (50c)");
+      }
+      dispatch({ type: "SET_ATTEMPTS", payload: 1 });
+      dispatch({ type: "SET_ALERT_BOX", payload: false });
+      dispatch({ type: "SET_CORRECT", payload: 0 });
+      GetNewWord();
+      dispatch({ type: "SET_CREDIT", payload: credits - 50 });
+    } else {
+      dispatch({ type: "SET_ATTEMPTS", payload: attempts + 1 });
+      dispatch({ type: "SET_ALERT_BOX", payload: false });
+      GetNewWord();
+      dispatch({ type: "SET_AVOID_RESET_INITIAL_USER_SET_WORD", payload: [] });
+    }
   }
   function handleClear() {
     dispatch({ type: "SET_USER_SET_WORD", payload: [...initialUserSetWord] });
@@ -149,7 +159,16 @@ function HomePage() {
     console.log(userSetWord);
   }
 
-  function handleRestart() {}
+  function handleRestart() {
+    if (credits < 50) {
+      dispatch({ type: "SET_ALERT_BOX", payload: false });
+      return alert("You need atleast 50 play credits (50c)");
+    }
+    dispatch({ type: "SET_ATTEMPTS", payload: 1 });
+    dispatch({ type: "SET_ALERT_BOX", payload: false });
+    dispatch({ type: "SET_CORRECT", payload: 0 });
+    GetNewWord();
+  }
 
   return (
     <MainLayout>
