@@ -1,20 +1,23 @@
+import useAppContext from "../hooks/useAppContext";
 import Button from "./Button";
 
 interface AlertBoxProps {
-  word: string;
-  userSetWord: string[];
   alertboxVisible: boolean;
   handleContinue: () => void;
   handleRestart: () => void;
+  creditReward: number;
+  scoreReward: number;
 }
 
 function AlertBox({
-  word,
-  userSetWord,
   alertboxVisible,
   handleContinue,
   handleRestart,
+  creditReward,
+  scoreReward,
 }: AlertBoxProps) {
+  const { state } = useAppContext();
+  const { userSetWord, word, attempts, attemptType, correct } = state;
   return (
     <div
       className={
@@ -40,17 +43,19 @@ function AlertBox({
         </div>
         <hr className="w-48 opacity-50" />
         <div className="">
-          Answered: <span className="font-bold">06/10</span>
+          Answered:{" "}
+          <span className="font-bold">{`${attempts}/${attemptType}`}</span>
         </div>
         <div className="">
-          Correct: <span className="font-bold">04/10</span>
+          Correct:{" "}
+          <span className="font-bold">{`${correct}/${attemptType}`}</span>
         </div>{" "}
         <hr className="w-36 opacity-50" />
         <div className="">
-          Reward: <span className="font-bold">+10 points</span>
+          Score: <span className="font-bold">{`+${scoreReward} points`}</span>
         </div>
         <div className="">
-          Reward: <span className="font-bold">+2c</span>
+          Reward: <span className="font-bold">{`+${creditReward}c`}</span>
         </div>
       </div>
 

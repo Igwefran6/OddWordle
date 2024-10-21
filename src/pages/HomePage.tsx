@@ -18,15 +18,19 @@ function HomePage() {
     word,
     difficulty,
     attempts,
+    correct,
+    credits,
     userSetWord,
     initialUserSetWord,
     avoidResetUserSetWord,
+    totalScore,
+    alertBox,
   } = state;
 
   const [settingsVisible, setSettingsVisible] = useState(false);
-  const [alertboxVisible, setAlertboxVisible] = useState(false);
-
-  const hintCount = 2;
+  const [creditReward, setCreditReward] = useState(0);
+  const [scoreReward, setScoreReward] = useState(0);
+  const hintCount = Math.floor(difficulty / 2);
 
   // Fetch a new word based on the difficulty level and ensure it's processed before dispatching
   async function GetNewWord() {
@@ -44,10 +48,32 @@ function HomePage() {
     const scrambledArray = shuffleAndScramble({ word: newWordData.word });
     dispatch({ type: "UPDATE_ARRAY", payload: scrambledArray });
 
-    // Now, manage hints based on the new word
+    // Manage hints based on the new word
     handleHints(newWordData.word);
   }
 
+  useEffect(() => {
+    if (attempts + 1 === attempts) {
+      console.log("Game complete");
+    } else {
+      console.log("Game not complete");
+    }
+  }, [attempts]);
+
+  function handleHints(word: string) {
+    const newUserSetWord = Array(difficulty).fill("");
+    const randomIndices = getRandomIndices(hintCount, difficulty);
+    randomIndices.forEach((index: any) => {
+      newUserSetWord[index] = word[index];
+    });
+    // Update userSetWord and related state only after word is fully set
+    dispatch({ type: "SET_USER_SET_WORD", payload: newUserSetWord });
+    dispatch({ type: "SET_INITIAL_USER_SET_WORD", payload: newUserSetWord });
+    dispatch({
+      type: "SET_AVOID_RESET_INITIAL_USER_SET_WORD",
+      payload: newUserSetWord,
+    });
+  }
   function resetRefetch() {
     // Clear the state when difficulty changes
     dispatch({
@@ -59,35 +85,11 @@ function HomePage() {
     GetNewWord();
   }
 
-  function handleHints(word: string) {
-    const newUserSetWord = Array(difficulty).fill("");
-    const randomIndices = getRandomIndices(hintCount, difficulty);
-
-    randomIndices.forEach((index: any) => {
-      newUserSetWord[index] = word[index];
-    });
-
-    // Update userSetWord and related state only after word is fully set
-    dispatch({ type: "SET_USER_SET_WORD", payload: newUserSetWord });
-    dispatch({ type: "SET_INITIAL_USER_SET_WORD", payload: newUserSetWord });
-    dispatch({
-      type: "SET_AVOID_RESET_INITIAL_USER_SET_WORD",
-      payload: newUserSetWord,
-    });
-  }
-
-  useEffect(() => {
-    dispatch({
-      type: "CLICKED_INDICES",
-      payload: [],
-    });
-  }, []);
-
   // Effect for initial setup of userSetWord and fetching new word
   useEffect(() => {
     if (avoidResetUserSetWord.length > 0) {
       // If avoidResetUserSetWord has values, restore the userSetWord state
-      dispatch({ type: "SET_USER_SET_WORD", payload: avoidResetUserSetWord });
+      // dispatch({ type: "SET_USER_SET_WORD", payload: avoidResetUserSetWord });
       dispatch({
         type: "SET_INITIAL_USER_SET_WORD",
         payload: avoidResetUserSetWord,
@@ -109,25 +111,42 @@ function HomePage() {
 
   function handleCheck() {
     if (isArrayFilled(userSetWord)) {
-      setAlertboxVisible(true);
+      dispatch({ type: "CLICKED_INDICES", payload: [] });
+      dispatch({ type: "SET_ALERT_BOX", payload: true });
+
+      if (userSetWord.join("") === word) {
+        const creditReward = Math.floor(difficulty * 2);
+        const scoreReward = difficulty * 10;
+        setCreditReward(creditReward);
+        setScoreReward(scoreReward);
+        dispatch({ type: "SET_CORRECT", payload: correct + 1 });
+        dispatch({ type: "SET_CREDIT", payload: credits + creditReward });
+        dispatch({
+          type: "SET_TOTAL_SCORE",
+          payload: totalScore + scoreReward,
+        });
+      } else {
+        const creditReward = Math.floor(difficulty);
+        setCreditReward(Math.floor(difficulty));
+        dispatch({ type: "SET_CREDIT", payload: credits + creditReward });
+      }
     } else {
       alert("Please complete the answer box!");
     }
   }
 
+  function handleContinue() {
+    dispatch({ type: "SET_ATTEMPTS", payload: attempts + 1 });
+    dispatch({ type: "SET_ALERT_BOX", payload: false });
+    GetNewWord();
+    dispatch({ type: "SET_AVOID_RESET_INITIAL_USER_SET_WORD", payload: [] });
+  }
   function handleClear() {
     dispatch({ type: "SET_USER_SET_WORD", payload: [...initialUserSetWord] });
     dispatch({ type: "CLICKED_INDICES", payload: [] });
+    console.clear();
     console.log(state);
-    dispatch({ type: "SET_DIFFICULTY", payload: 6 });
-  }
-
-  function handleContinue() {
-    dispatch({ type: "SET_ATTEMPTS", payload: attempts + 1 });
-    setAlertboxVisible(false);
-    dispatch({ type: "CLICKED_INDICES", payload: [] });
-    GetNewWord();
-    dispatch({ type: "SET_AVOID_RESET_INITIAL_USER_SET_WORD", payload: [] });
+    console.log(userSetWord);
   }
 
   function handleRestart() {}
@@ -150,11 +169,11 @@ function HomePage() {
       />
       <HUD />
       <AlertBox
-        word={word}
-        userSetWord={userSetWord}
-        alertboxVisible={alertboxVisible}
+        alertboxVisible={alertBox}
         handleContinue={handleContinue}
         handleRestart={handleRestart}
+        creditReward={creditReward}
+        scoreReward={scoreReward}
       />
     </MainLayout>
   );
