@@ -6,7 +6,7 @@ function HUD() {
   const { totalScore, credits } = state;
 
   return (
-    <div className="absolute h-fit w-fit bottom-6 right-1/2 translate-x-1/2 lg:top-6 lg:right-24 lg:translate-x-0 p-4 bg-slate-800 flex gap-2">
+    <div className="absolute h-fit w-fit bottom-12 right-1/2 translate-x-1/2 lg:top-6 lg:right-24 lg:translate-x-0 p-4 bg-slate-800 flex gap-2">
       <p className="text-white font-semibold text-nowrap">
         Total score:{" "}
         <span className="font-normal">{wordFormatter(totalScore)}</span>

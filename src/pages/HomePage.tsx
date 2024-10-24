@@ -108,7 +108,7 @@ function HomePage() {
       dispatch({ type: "SET_ALERT_BOX", payload: true });
 
       if (userSetWord.join("") === word) {
-        const creditReward = Math.floor(difficulty * 2);
+        const creditReward = Math.floor(difficulty * difficulty);
         const scoreReward = difficulty * 10;
         setCreditReward(creditReward);
         setScoreReward(scoreReward);
@@ -119,9 +119,8 @@ function HomePage() {
           payload: totalScore + scoreReward,
         });
       } else {
-        const creditReward = Math.floor(difficulty);
-        setCreditReward(Math.floor(difficulty));
-        dispatch({ type: "SET_CREDIT", payload: credits + creditReward });
+        setCreditReward(4);
+        dispatch({ type: "SET_CREDIT", payload: credits + 4 });
       }
       if (attempts === attemptType) {
         console.log("Game complete");
@@ -134,16 +133,17 @@ function HomePage() {
   }
 
   function handleContinue() {
+    const cost = difficulty * 10;
     if (attempts >= attemptType) {
-      if (credits < 50) {
+      if (credits < cost) {
+        return alert(`You need atleast ${cost} play credits (${cost}c)`);
+      } else {
+        dispatch({ type: "SET_ATTEMPTS", payload: 1 });
         dispatch({ type: "SET_ALERT_BOX", payload: false });
-        return alert("You need atleast 50 play credits (50c)");
+        dispatch({ type: "SET_CORRECT", payload: 0 });
+        GetNewWord();
+        dispatch({ type: "SET_CREDIT", payload: credits - cost });
       }
-      dispatch({ type: "SET_ATTEMPTS", payload: 1 });
-      dispatch({ type: "SET_ALERT_BOX", payload: false });
-      dispatch({ type: "SET_CORRECT", payload: 0 });
-      GetNewWord();
-      dispatch({ type: "SET_CREDIT", payload: credits - 50 });
     } else {
       dispatch({ type: "SET_ATTEMPTS", payload: attempts + 1 });
       dispatch({ type: "SET_ALERT_BOX", payload: false });
@@ -160,19 +160,22 @@ function HomePage() {
   }
 
   function handleRestart() {
-    if (credits < 50) {
+    const cost = difficulty * 10;
+    if (credits < cost) {
       dispatch({ type: "SET_ALERT_BOX", payload: false });
-      return alert("You need atleast 50 play credits (50c)");
+      return alert(`You need atleast ${cost} play credits (${cost}c)`);
+    } else {
+      dispatch({ type: "SET_ATTEMPTS", payload: 1 });
+      dispatch({ type: "SET_ALERT_BOX", payload: false });
+      dispatch({ type: "SET_CORRECT", payload: 0 });
+      GetNewWord();
+      dispatch({ type: "SET_CREDIT", payload: credits - cost });
     }
-    dispatch({ type: "SET_ATTEMPTS", payload: 1 });
-    dispatch({ type: "SET_ALERT_BOX", payload: false });
-    dispatch({ type: "SET_CORRECT", payload: 0 });
-    GetNewWord();
   }
 
   return (
     <MainLayout>
-      <div className="flex flex-col h-full flex-1 justify-center items-center">
+      <div className="flex flex-col flex-1 justify-center items-center h-[calc(100svh-5rem)]">
         <AnswerBox />
         <WordBoard />
         <div className="flex gap-4">

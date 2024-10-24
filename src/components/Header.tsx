@@ -32,14 +32,6 @@ const Header = () => {
             </li>{" "}
             <li>
               <Link
-                to="/achievements"
-                className="text-white hover:text-gray-300 hover:bg-slate-700 p-2 active:scale-95 inline-block"
-              >
-                Achievements
-              </Link>
-            </li>{" "}
-            <li>
-              <Link
                 to="/leader-board"
                 className="text-white hover:text-gray-300 hover:bg-slate-700 p-2 active:scale-95 inline-block"
               >
